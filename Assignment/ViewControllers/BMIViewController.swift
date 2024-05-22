@@ -9,7 +9,10 @@ import UIKit
 
 class BMIViewController: UIViewController {
 
+    let userDefault = UserDefaults.standard
+    
     @IBOutlet var containerView: [UIView]!
+    @IBOutlet var nicknameTextField: UITextField!
     @IBOutlet var heightTextField: UITextField!
     @IBOutlet var weightTextField: UITextField!
     
@@ -48,6 +51,7 @@ class BMIViewController: UIViewController {
         //Correct Input
         let intResult = Double(intWeight) / (Double(intHeight * intHeight) / 10000)
         let stringResult = String(format: "%.2f", intResult)
+        //numberfomatter 사용
         
         var BMIResult = "비만입니다."
         switch intResult {
@@ -60,7 +64,13 @@ class BMIViewController: UIViewController {
         default:
             break
         }
-
+        
+        let nickname = nicknameTextField.text ?? ""
+        
+        userDefault.set(nickname, forKey: "nickname")
+        userDefault.set(height, forKey: "height")
+        userDefault.set(weight, forKey: "weight")
+        
         alert(title: "BMI결과입니다.", message: "\(stringResult) \(BMIResult)")
     }
     
@@ -75,6 +85,25 @@ class BMIViewController: UIViewController {
     @IBAction func secureButtonPressed(_ sender: UIButton) {
         let current = weightTextField.isSecureTextEntry
         current ? (weightTextField.isSecureTextEntry = false) : (weightTextField.isSecureTextEntry = true)
+    }
+    @IBAction func myInfoButtonPressed(_ sender: UIButton) {
+        guard let nickname = userDefault.string(forKey: "nickname") else { return }
+        guard let height = userDefault.string(forKey: "height") else { return }
+        guard let weight = userDefault.string(forKey: "weight") else { return }
+        
+        nicknameTextField.text = nickname
+        heightTextField.text = height
+        weightTextField.text = weight
+    }
+    
+    @IBAction func resetButtonPressed(_ sender: UIButton) {
+        userDefault.removeObject(forKey: "nickname")
+        userDefault.removeObject(forKey: "height")
+        userDefault.removeObject(forKey: "weight")
+        
+        nicknameTextField.text = ""
+        heightTextField.text = ""
+        weightTextField.text = ""
     }
     
     @IBAction func randomButtonPressed(_ sender: UIButton) {
